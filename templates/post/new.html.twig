@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau Post - SymfoConnect{% endblock %}
+
+{% block body %}
+    <div class="form-card">
+        <h1 class="form-title">Créer une publication</h1>
+
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+            <div class="form-group">
+                {{ form_label(form.content, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.content) }}
+                <div class="error-message">
+                    {{ form_errors(form.content) }}
+                </div>
+            </div>
+
+            <button type="submit" class="nav-item btn-primary btn-submit">Publier</button>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

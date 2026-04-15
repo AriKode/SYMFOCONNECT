@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}SymfoConnect{% endblock %}</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>🌐</text></svg>">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        {# Google Fonts #}
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+        {% block stylesheets %}
+            <link rel="stylesheet" href="{{ asset('styles/app.css') }}">
+        {% endblock %}
+
+        {% block javascripts %}
+            {% block importmap %}{{ importmap('app') }}{% endblock %}
+        {% endblock %}
+    </head>
+    <body>
+        <nav class="navbar">
+            <div class="container nav-content">
+                <a href="{{ path('app_home') }}" class="logo">Symfo<span>Connect</span></a>
+                <div class="nav-links">
+                    <a href="{{ path('app_home') }}" class="nav-item">Accueil</a>
+                    <a href="{{ path('app_post_new') }}" class="nav-item btn-primary">Nouveau Post</a>
+                </div>
+            </div>
+        </nav>
+
+        <main class="container">
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="flash flash-{{ label }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            {% block body %}{% endblock %}
+        </main>
+
+        <footer class="footer">
+            <div class="container">
+                <p>&copy; {{ "now"|date("Y") }} SymfoConnect - Projet Évaluation</p>
+            </div>
+        </footer>
+    </body>
+</html>
