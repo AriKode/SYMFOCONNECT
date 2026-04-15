@@ -40,6 +40,15 @@ L'objectif du premier jour était de mettre en place la base du projet, le sché
    ```bash
    php bin/console doctrine:migrations:migrate
    ```
+5. Charger les données de test (optionnel) :
+   ```bash
+   php bin/console doctrine:fixtures:load --no-interaction
+   ```
+
+### Données de TEST (Fixtures)
+Le projet inclut un système de Fixtures (`src/DataFixtures/AppFixtures.php`) qui permet de peupler instantanément la base de données avec :
+- L'utilisateur **Arikode** et 5 autres profils variés.
+- Une dizaine de publications réalistes pour tester le fil d'actualité et les pages de profil.
 
 ### Lancement
 Pour lancer le serveur de développement :
