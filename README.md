@@ -1,8 +1,8 @@
-# SymfoConnect 🌐
+# SymfoConnect
 
 SymfoConnect est un réseau social développé dans le cadre d'une évaluation Symfony 7. Ce projet est réalisé progressivement sur 3 jours.
 
-## 📅 Jour 1 : Fondations et Pages Publiques
+## Jour 1 : Fondations et Pages Publiques
 
 L'objectif du premier jour était de mettre en place la base du projet, le schéma de données et les premières pages interactives.
 
@@ -21,7 +21,7 @@ L'objectif du premier jour était de mettre en place la base du projet, le sché
 
 ---
 
-## 🛠️ Installation et Lancement
+## Installation et Lancement
 
 ### Prérequis
 - PHP 8.2 ou supérieur
@@ -50,7 +50,7 @@ L'application sera accessible sur : **[https://127.0.0.1:8000](https://127.0.0.1
 
 ---
 
-## 🏗️ Structure de la BD (Actuelle)
+## Structure de la BD (Actuelle)
 ```mermaid
 erDiagram
     USER ||--o{ POST : "publie"
@@ -71,7 +71,7 @@ erDiagram
     }
 ```
 
-## 🚀 Prochaines étapes (Jour 2)
+## Prochaines étapes (Jour 2)
 - Mise en place de l'**Authentification** (Login/Register).
 - Système de **Follows** entre utilisateurs.
 - Gestion des **Likes** sur les posts.
