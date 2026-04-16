@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% title %}Mon Fil d'Actualité - SymfoConnect{% endtitle %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h1 class="h3 mb-4 animate__animated animate__fadeInLeft">Mon Fil d'Actualité</h1>
+
+        {% if message %}
+            <div class="glass-card p-5 text-center animate__animated animate__zoomIn">
+                <div class="mb-4">
+                    <i class="bi bi-people text-primary" style="font-size: 3rem;"></i>
+                </div>
+                <h2 class="h4">{{ message }}</h2>
+                <a href="{{ path('app_home') }}" class="btn btn-primary mt-3 glass-button">Découvrir des personnes</a>
+            </div>
+        {% else %}
+            <div class="posts-container">
+                {% for post in posts %}
+                    {% include 'post/_post_card.html.twig' with {'post': post} %}
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

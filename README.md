@@ -80,8 +80,61 @@ erDiagram
     }
 ```
 
-## Prochaines étapes (Jour 2)
-- Mise en place de l'**Authentification** (Login/Register).
-- Système de **Follows** entre utilisateurs.
-- Gestion des **Likes** sur les posts.
-- Sécurisation des routes.
+## Jour 2 : Fonctionnalités Sociales et Sécurité
+
+L'objectif du deuxième jour était de transformer le prototype en une véritable application sociale sécurisée.
+
+### Fonctionnalités réalisées :
+- **Authentification complète** :
+    - Système d'inscription avec validation d'unicité (email/username) et hachage sécurisé des mots de passe.
+    - Connexion/Déconnexion gérée via Symfony Security.
+- **Sécurisation des contenus** :
+    - Création de post réservée aux utilisateurs connectés.
+    - Attribution automatique de l'auteur au post créé.
+    - **PostVoter** : Seul l'auteur peut supprimer ses propres publications (protection 403).
+- **Interactions Sociales** :
+    - **Follow/Unfollow** : Possibilité de suivre d'autres utilisateurs depuis leur profil.
+    - **Likes** : Système de "J'aime" sur les publications avec compteurs en temps réel.
+    - **Fil d'actualité (`/feed`)** : Page regroupant exclusivement les posts des personnes suivies.
+- **Système de Notifications** : Création automatique d'une notification en base de données quand un utilisateur est suivi.
+- **Design Premium** : Amélioration de l'interface avec du **Glassmorphism** avancé, des animations (Animate.css) et une navigation dynamique.
+
+---
+
+## Structure de la BD (Finale Jour 2)
+```mermaid
+erDiagram
+    USER ||--o{ POST : "publie"
+    USER ||--o{ NOTIFICATION : "reçoit"
+    USER }o--o{ USER : "suit (user_follows)"
+    USER }o--o{ POST : "like (post_likes)"
+    
+    USER {
+        int id
+        string email
+        string username
+        string password
+        text bio
+        string avatarUrl
+        datetime createdAt
+    }
+    POST {
+        int id
+        text content
+        datetime createdAt
+        int author_id
+    }
+    NOTIFICATION {
+        int id
+        int recipient_id
+        string type
+        text content
+        boolean isRead
+        datetime createdAt
+    }
+```
+
+## Prochaines étapes (Jour 3)
+- Recherche avancée d'utilisateurs et de posts.
+- Amélioration de la gestion des avatars.
+- Optimisations de performance et polissage final.

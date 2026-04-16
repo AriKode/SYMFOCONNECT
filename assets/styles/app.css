@@ -8,6 +8,8 @@
     --text-muted: #94a3b8;
     --border-color: rgba(255, 255, 255, 0.1);
     --glass-blur: blur(12px);
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -297,12 +299,86 @@ body {
     color: var(--text-muted);
 }
 
+/* Glassmorphism Classes */
+.glass-card {
+    background: var(--card-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.glass-input {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid var(--glass-border) !important;
+    color: white !important;
+    border-radius: 12px !important;
+    transition: var(--transition);
+}
+
+.glass-input:focus {
+    background: rgba(255, 255, 255, 0.07) !important;
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.2) !important;
+}
+
+.glass-button {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.glass-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(99, 102, 241, 0.4);
+}
+
+.glass-button-sm {
+    border-radius: 8px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+}
+
+/* User Menu */
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-left: 1rem;
+    border-left: 1px solid var(--border-color);
+}
+
+.username {
+    color: var(--primary-color) !important;
+    font-weight: 600;
+}
+
+.logout {
+    font-size: 0.9rem;
+    color: var(--secondary-color) !important;
+}
+
+/* Animations */
+.hover-lift:hover {
+    transform: translateY(-5px);
+    transition: var(--transition);
+}
+
 @keyframes slideIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
 @media (max-width: 600px) {
-    .nav-links { gap: 1rem; }
-    .btn-primary { padding: 0.5rem 1rem; font-size: 0.9rem; }
+    .nav-links { 
+        gap: 0.5rem; 
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .user-menu {
+        border-left: none;
+        padding-left: 0;
+    }
 }

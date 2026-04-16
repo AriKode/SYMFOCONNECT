@@ -1,0 +1,47 @@
+<div class="glass-card mb-4 p-4 animate__animated animate__fadeInUp hover-lift" id="post-{{ post.id }}">
+    <div class="d-flex align-items-center mb-3">
+        <div class="avatar-sm me-3">
+            {% if post.author.avatarUrl %}
+                <img src="{{ post.author.avatarUrl }}" alt="{{ post.author.username }}" class="rounded-circle" width="45" height="45">
+            {% else %}
+                <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center text-white fw-bold" style="width: 45px; height: 45px;">
+                    {{ post.author.username|slice(0, 1)|upper }}
+                </div>
+            {% endif %}
+        </div>
+        <div>
+            <h5 class="mb-0">
+                <a href="{{ path('app_profile', {'username': post.author.username}) }}" class="text-decoration-none text-white">
+                    {{ post.author.username }}
+                </a>
+            </h5>
+            <small class="text-muted">{{ post.createdAt|date('d/m/Y à H:i') }}</small>
+        </div>
+    </div>
+    
+    <div class="post-content mb-3 text-light">
+        {{ post.content|nl2br }}
+    </div>
+
+    <div class="d-flex align-items-center border-top pt-3 mt-3">
+        {% if app.user %}
+            <a href="{{ path('app_post_like', {'id': post.id}) }}" class="btn btn-sm {{ post.isLikedByUser(app.user) ? 'btn-danger' : 'btn-outline-light' }} me-3 glass-button-sm">
+                <i class="bi {{ post.isLikedByUser(app.user) ? 'bi-heart-fill' : 'bi-heart' }}"></i>
+                {{ post.likes|length }}
+            </a>
+        {% else %}
+            <span class="text-muted me-3">
+                <i class="bi bi-heart"></i> {{ post.likes|length }}
+            </span>
+        {% endif %}
+        
+        {% if is_granted('DELETE', post) %}
+            <form method="post" action="{{ path('app_post_delete', {'id': post.id}) }}" onsubmit="return confirm('Supprimer ce post ?');" class="ms-auto">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ post.id) }}">
+                <button class="btn btn-sm btn-outline-danger border-0">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </form>
+        {% endif %}
+    </div>
+</div>

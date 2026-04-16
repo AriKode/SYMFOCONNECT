@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription - SymfoConnect{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="glass-card p-5 animate__animated animate__fadeInUp">
+            <h1 class="h2 mb-4 text-center">Rejoindre SymfoConnect</h1>
+            
+            {{ form_start(registrationForm) }}
+                <div class="mb-3">
+                    {{ form_label(registrationForm.email) }}
+                    {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control glass-input'}}) }}
+                    {{ form_errors(registrationForm.email) }}
+                </div>
+                
+                <div class="mb-3">
+                    {{ form_label(registrationForm.username) }}
+                    {{ form_widget(registrationForm.username, {'attr': {'class': 'form-control glass-input'}}) }}
+                    {{ form_errors(registrationForm.username) }}
+                </div>
+
+                <div class="mb-4">
+                    {{ form_row(registrationForm.plainPassword.first, {'attr': {'class': 'form-control glass-input'}}) }}
+                    {{ form_row(registrationForm.plainPassword.second, {'attr': {'class': 'form-control glass-input'}}) }}
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 py-3 glass-button">
+                    Créer mon compte
+                </button>
+            {{ form_end(registrationForm) }}
+
+            <div class="mt-4 text-center">
+                <p class="text-muted">Déjà un compte ? <a href="{{ path('app_login') }}" class="text-primary fw-bold">Connectez-vous</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

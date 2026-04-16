@@ -7,25 +7,11 @@
 
     <div class="post-list">
         {% for post in posts %}
-            <div class="post-card">
-                <div class="post-header">
-                    <div class="avatar-small">
-                        {{ post.author.username|slice(0, 1)|upper }}
-                    </div>
-                    <div class="post-info">
-                        <a href="{{ path('app_profile', {'username': post.author.username}) }}" class="post-author">
-                            @{{ post.author.username }}
-                        </a>
-                        <span class="post-date">{{ post.createdAt|date('d/m/Y H:i') }}</span>
-                    </div>
-                </div>
-                <div class="post-content">{{ post.content }}</div>
-            </div>
+            {% include 'post/_post_card.html.twig' with {'post': post} %}
         {% else %}
-            <div class="post-card" style="text-align: center; color: var(--text-muted);">
-                <p>Aucun post pour le moment. Soyez le premier à en publier un !</p>
-                <br>
-                <a href="{{ path('app_post_new') }}" class="btn-primary" style="display: inline-block;">Créer un post</a>
+            <div class="glass-card p-5 text-center animate__animated animate__zoomIn">
+                <p class="text-muted">Aucun post pour le moment. Soyez le premier à en publier un !</p>
+                <a href="{{ path('app_post_new') }}" class="btn btn-primary mt-3 glass-button">🚀 Créer un post</a>
             </div>
         {% endfor %}
     </div>

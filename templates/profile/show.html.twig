@@ -3,7 +3,7 @@
 {% block title %}@{{ user.username }} - SymfoConnect{% endblock %}
 
 {% block body %}
-    <div class="profile-card">
+    <div class="profile-card animate__animated animate__fadeIn">
         <div class="avatar-large">
             {% if user.avatarUrl %}
                 <img src="{{ user.avatarUrl }}" alt="{{ user.username }}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
@@ -13,23 +13,38 @@
         </div>
         <h1 class="profile-name">@{{ user.username }}</h1>
         <p class="profile-bio">{{ user.bio ?: 'Cet utilisateur n\'a pas encore de bio.' }}</p>
-        <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-muted);">
+        
+        <div class="d-flex justify-content-center gap-4 my-4">
+            <div class="text-center">
+                <div class="h4 mb-0 fw-bold">{{ user.following|length }}</div>
+                <small class="text-muted">Abonnements</small>
+            </div>
+            <div class="text-center">
+                <div class="h4 mb-0 fw-bold">{{ user.followers|length }}</div>
+                <small class="text-muted">Abonnés</small>
+            </div>
+        </div>
+
+        {% if app.user and app.user != user %}
+            <a href="{{ path('app_follow', {'username': user.username}) }}" class="btn {{ app.user.isFollowing(user) ? 'btn-outline-primary' : 'btn-primary' }} px-5 glass-button">
+                {{ app.user.isFollowing(user) ? 'Ne plus suivre' : 'Suivre' }}
+            </a>
+        {% endif %}
+
+        <div class="mt-4 small text-muted">
             Membre depuis le {{ user.createdAt|date('d/m/Y') }}
         </div>
     </div>
 
-    <h2 class="form-title" style="font-size: 1.5rem;">Ses publications</h2>
+    <h2 class="h4 mb-4">Publications de {{ user.username }}</h2>
 
     <div class="post-list">
-        {% for post in user.posts %}
-            <div class="post-card">
-                <div class="post-header">
-                    <span class="post-date">{{ post.createdAt|date('d/m/Y H:i') }}</span>
-                </div>
-                <div class="post-content">{{ post.content }}</div>
-            </div>
+        {% for post in user.posts|sort((a, b) => b.createdAt <=> a.createdAt) %}
+            {% include 'post/_post_card.html.twig' with {'post': post} %}
         {% else %}
-            <p style="text-align: center; color: var(--text-muted);">Aucun post publié par cet utilisateur.</p>
+            <div class="glass-card p-4 text-center">
+                <p class="text-muted mb-0">Aucun post publié par cet utilisateur.</p>
+            </div>
         {% endfor %}
     </div>
 {% endblock %}
