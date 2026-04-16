@@ -96,6 +96,7 @@ class SocialController extends AbstractController
 
         return $this->render('social/feed.html.twig', [
             'posts' => $posts,
+            'message' => null,
         ]);
     }
 }

@@ -1,13 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% title %}Mon Fil d'Actualité - SymfoConnect{% endtitle %}
+{% block title %}Mon Fil d'Actualité - SymfoConnect{% endblock %}
 
 {% block body %}
 <div class="row justify-content-center">
     <div class="col-md-8">
         <h1 class="h3 mb-4 animate__animated animate__fadeInLeft">Mon Fil d'Actualité</h1>
 
-        {% if message %}
+        {% if message is defined and message %}
             <div class="glass-card p-5 text-center animate__animated animate__zoomIn">
                 <div class="mb-4">
                     <i class="bi bi-people text-primary" style="font-size: 3rem;"></i>
