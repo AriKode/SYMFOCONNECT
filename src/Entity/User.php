@@ -72,12 +72,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Post::class, mappedBy: 'likes')]
     private Collection $likedPosts;
 
+    /**
+     * @var Collection<int, Message>
+     */
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'sender', orphanRemoval: true)]
+    private Collection $sentMessages;
+
+    /**
+     * @var Collection<int, Message>
+     */
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'recipient', orphanRemoval: true)]
+    private Collection $receivedMessages;
+
     public function __construct()
     {
         $this->posts = new ArrayCollection();
         $this->following = new ArrayCollection();
         $this->followers = new ArrayCollection();
         $this->likedPosts = new ArrayCollection();
+        $this->sentMessages = new ArrayCollection();
+        $this->receivedMessages = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
     }
 

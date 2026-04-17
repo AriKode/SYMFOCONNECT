@@ -9,8 +9,19 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 
-#[ApiResource()]
+#[ApiResource(
+    operations: [
+        new \ApiPlatform\Metadata\GetCollection(),
+        new \ApiPlatform\Metadata\Post(security: "is_granted('ROLE_USER')"),
+        new \ApiPlatform\Metadata\Get(),
+    ],
+    paginationEnabled: true,
+    paginationItemsPerPage: 10
+)]
+#[ApiFilter(SearchFilter::class, properties: ['content' => 'partial', 'author.username' => 'exact'])]
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 class Post
 {

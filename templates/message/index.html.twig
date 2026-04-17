@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Conversations - SymfoConnect{% endblock %}
+
+{% block body %}
+<div class="messages-container">
+    <h1 class="page-title">Mes Conversations</h1>
+
+    <div class="conversations-list">
+        {% for otherUser in conversations %}
+            <a href="{{ path('app_message_show', {'username': otherUser.username}) }}" class="conversation-item">
+                <div class="user-avatar">
+                    <img src="{{ otherUser.avatarUrl ?: 'https://ui-avatars.com/api/?name=' ~ otherUser.username }}" alt="{{ otherUser.username }}">
+                </div>
+                <div class="conversation-info">
+                    <div class="user-header">
+                        <span class="username">@{{ otherUser.username }}</span>
+                    </div>
+                </div>
+                <div class="action-arrow">
+                    <i class="bi bi-chevron-right"></i>
+                </div>
+            </a>
+        {% else %}
+            <div class="empty-state">
+                <i class="bi bi-chat-dots"></i>
+                <p>Vous n'avez pas encore de conversations.</p>
+                <a href="{{ path('app_home') }}" class="btn-primary">Découvrir des profils</a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .messages-container {
+        max-width: 600px;
+        margin: 2rem auto;
+    }
+    .conversations-list {
+        background: var(--bg-card);
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        overflow: hidden;
+    }
+    .conversation-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        text-decoration: none;
+        color: inherit;
+        transition: background 0.2s;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    .conversation-item:hover {
+        background: rgba(0,0,0,0.02);
+    }
+    .user-avatar img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 1rem;
+    }
+    .conversation-info {
+        flex: 1;
+    }
+    .action-arrow {
+        color: #94a3b8;
+    }
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+    }
+    .empty-state i {
+        font-size: 3rem;
+        color: #cbd5e1;
+    }
+</style>
+{% endblock %}

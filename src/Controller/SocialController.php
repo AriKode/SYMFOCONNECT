@@ -12,6 +12,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 class SocialController extends AbstractController
 {
@@ -73,7 +76,7 @@ class SocialController extends AbstractController
 
     #[Route('/feed', name: 'app_feed')]
     #[IsGranted('ROLE_USER')]
-    public function feed(PostRepository $postRepository): Response
+    public function feed(PostRepository $postRepository, TagAwareCacheInterface $cache): Response
     {
         /** @var User $currentUser */
         $currentUser = $this->getUser();
@@ -86,13 +89,19 @@ class SocialController extends AbstractController
             ]);
         }
 
-        // Get posts from users followed by the current user
-        $posts = $postRepository->createQueryBuilder('p')
-            ->where('p.author IN (:following)')
-            ->setParameter('following', $following)
-            ->orderBy('p.createdAt', 'DESC')
-            ->getQuery()
-            ->getResult();
+        $cacheKey = 'feed_user_' . $currentUser->getId();
+        
+        $posts = $cache->get($cacheKey, function (ItemInterface $item) use ($postRepository, $following) {
+            $item->expiresAfter(300); // 5 minutes
+            $item->tag(['feed_posts']);
+
+            return $postRepository->createQueryBuilder('p')
+                ->where('p.author IN (:following)')
+                ->setParameter('following', $following)
+                ->orderBy('p.createdAt', 'DESC')
+                ->getQuery()
+                ->getResult();
+        });
 
         return $this->render('social/feed.html.twig', [
             'posts' => $posts,
