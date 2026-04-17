@@ -2,12 +2,12 @@
 
 ## Objectifs du jour
 
-- [ ] Messagerie privée (conversations, historique, envoi, marquage lu)
-- [ ] API REST (Pagination, filtres, documentation, création sécurisée)
-- [ ] Cache sur le fil d'actualité (5 min, invalidation à la création de post)
-- [ ] Traitement asynchrone (Messenger pour notifications par email)
-- [ ] Tests automatisés (Unitaires et Fonctionnels)
-- [ ] Configuration de production (.env.prod.local.example, deploy.sh)
+- [x] Messagerie privée (conversations, historique, envoi, marquage lu)
+- [x] API REST (Pagination, filtres, documentation, création sécurisée)
+- [x] Cache sur le fil d'actualité (5 min, invalidation à la création de post)
+- [x] Traitement asynchrone (Messenger pour notifications par email)
+- [x] Tests automatisés (Unitaires et Fonctionnels)
+- [x] Configuration de production (.env.prod.local.example, deploy.sh)
 
 ## Statut de l'évaluation
 

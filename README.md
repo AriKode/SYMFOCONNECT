@@ -134,7 +134,86 @@ erDiagram
     }
 ```
 
-## Prochaines étapes (Jour 3)
-- Recherche avancée d'utilisateurs et de posts.
-- Amélioration de la gestion des avatars.
-- Optimisations de performance et polissage final.
+## Jour 3 : Finalisation, API et Messagerie
+
+L'objectif du dernier jour était d'apporter les fonctionnalités avancées et de préparer l'application pour une utilisation réelle (API, performance, messagerie).
+
+### Fonctionnalités réalisées :
+- **Messagerie Privée** : 
+    - Système de conversations entre utilisateurs.
+    - Interface d'envoi et de réception de messages en temps réel (ou simulé via refresh).
+    - Liste des conversations actives sur le profil.
+- **Commentaires** :
+    - Possibilité d'ajouter des commentaires sous chaque publication.
+    - Affichage dynamique des commentaires dans le fil d'actualité.
+- **API REST & Sécurité JWT** :
+    - Exposition des ressources (`User`, `Post`, `Comment`) via **API Platform**.
+    - Sécurisation des points d'entrée API avec **JWT** (LexikJWTAuthenticationBundle).
+    - Documentation Swagger disponible sur `/api`.
+- **Traitement Asynchrone (Messenger)** :
+    - Configuration de Symfony Messenger pour la gestion des notifications en arrière-plan.
+- **Optimisations et UI** :
+    - **Cache** : Mise en place d'un système de cache sur le fil d'actualité pour améliorer les performances.
+    - **Upload d'Avatar** : Système robuste de gestion des photos de profil.
+    - **Refonte visuelle** : Feed style "Facebook" plus immersif.
+- **Tests** : Mise en place de tests unitaires et fonctionnels avec PHPUnit pour garantir la stabilité.
+
+---
+
+## Structure de la BD (Version Finale)
+```mermaid
+erDiagram
+    USER ||--o{ POST : "publie"
+    USER ||--o{ COMMENT : "écrit"
+    USER ||--o{ NOTIFICATION : "reçoit"
+    USER ||--o{ MESSAGE : "envoie/reçoit"
+    USER }o--o{ USER : "suit (user_follows)"
+    USER }o--o{ POST : "like (post_likes)"
+    POST ||--o{ COMMENT : "contient"
+    
+    USER {
+        int id
+        string email
+        string username
+        string password
+        text bio
+        string avatarUrl
+        datetime createdAt
+    }
+    POST {
+        int id
+        text content
+        datetime createdAt
+        int author_id
+    }
+    COMMENT {
+        int id
+        text content
+        datetime createdAt
+        int author_id
+        int post_id
+    }
+    MESSAGE {
+        int id
+        text content
+        datetime createdAt
+        int sender_id
+        int recipient_id
+        boolean isRead
+    }
+    NOTIFICATION {
+        int id
+        int recipient_id
+        string type
+        text content
+        boolean isRead
+        datetime createdAt
+    }
+```
+
+## Technologies utilisées
+- **Backend** : Symfony 7.4, PHP 8.3
+- **Database** : MySQL (Doctrine ORM)
+- **API** : API Platform, JWT
+- **Frontend** : Twig, AssetMapper, Vanilla JS, CSS (Glassmorphism)
+- **Outils** : Symfony CLI, Docker, PHPUnit, Messenger
