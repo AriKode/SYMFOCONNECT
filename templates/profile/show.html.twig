@@ -25,10 +25,26 @@
             </div>
         </div>
 
-        {% if app.user and app.user != user %}
-            <a href="{{ path('app_follow', {'username': user.username}) }}" class="btn {{ app.user.isFollowing(user) ? 'btn-outline-primary' : 'btn-primary' }} px-5 glass-button">
-                {{ app.user.isFollowing(user) ? 'Ne plus suivre' : 'Suivre' }}
-            </a>
+        {% if app.user == user %}
+            <div class="d-flex justify-content-center gap-2">
+                <a href="{{ path('app_profile_edit') }}" class="btn btn-primary glass-button">
+                    <i class="bi bi-pencil"></i> Modifier le profil
+                </a>
+                {% if user.avatarUrl %}
+                    <a href="{{ path('app_profile_delete_avatar') }}" class="btn btn-danger glass-button" onclick="return confirm('Supprimer la photo de profil ?')">
+                        <i class="bi bi-trash"></i> Supprimer la photo
+                    </a>
+                {% endif %}
+            </div>
+        {% elseif app.user %}
+            <div class="d-flex justify-content-center gap-2">
+                <a href="{{ path('app_follow', {'username': user.username}) }}" class="btn {{ app.user.isFollowing(user) ? 'btn-outline-primary' : 'btn-primary' }} glass-button">
+                    {{ app.user.isFollowing(user) ? 'Ne plus suivre' : 'Suivre' }}
+                </a>
+                <a href="{{ path('app_message_show', {'username': user.username}) }}" class="btn btn-secondary glass-button">
+                    <i class="bi bi-chat-dots-fill"></i> Message
+                </a>
+            </div>
         {% endif %}
 
         <div class="mt-4 small text-muted">

@@ -17,24 +17,25 @@ class MessageRepository extends ServiceEntityRepository
         parent::__construct($registry, Message::class);
     }
 
-    /**
-     * Retourne la liste des utilisateurs avec qui l'utilisateur actuel a une conversation
-     */
     public function findConversations(User $user): array
     {
-        $qb = $this->createQueryBuilder('m');
-        $qb->select('DISTINCT u')
-           ->from(User::class, 'u')
-           ->where('u.id != :userId')
-           ->andWhere($qb->expr()->orX(
-               $qb->expr()->andX('m.sender = :user', 'm.recipient = u'),
-               $qb->expr()->andX('m.sender = u', 'm.recipient = :user')
-           ))
-           ->setParameter('user', $user)
-           ->setParameter('userId', $user->getId())
-           ->orderBy('m.createdAt', 'DESC');
+        // On récupère tous les messages où l'utilisateur est soit expéditeur soit destinataire
+        $messages = $this->createQueryBuilder('m')
+            ->where('m.sender = :user OR m.recipient = :user')
+            ->setParameter('user', $user)
+            ->orderBy('m.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
 
-        return $qb->getQuery()->getResult();
+        $users = [];
+        foreach ($messages as $message) {
+            $otherUser = ($message->getSender() === $user) ? $message->getRecipient() : $message->getSender();
+            if (!isset($users[$otherUser->getId()])) {
+                $users[$otherUser->getId()] = $otherUser;
+            }
+        }
+
+        return array_values($users);
     }
 
     /**
