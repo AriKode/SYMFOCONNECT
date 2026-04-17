@@ -84,6 +84,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'recipient', orphanRemoval: true)]
     private Collection $receivedMessages;
 
+    /**
+     * @var Collection<int, Comment>
+     */
+    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'author', orphanRemoval: true)]
+    private Collection $comments;
+
     public function __construct()
     {
         $this->posts = new ArrayCollection();
@@ -92,7 +98,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->likedPosts = new ArrayCollection();
         $this->sentMessages = new ArrayCollection();
         $this->receivedMessages = new ArrayCollection();
+        $this->comments = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
+    }
+
+    /**
+     * @return Collection<int, Comment>
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
     }
 
     public function getId(): ?int

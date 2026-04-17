@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Comment;
 use App\Entity\Post;
 use App\Entity\User;
 use App\Form\PostType;
@@ -52,5 +53,42 @@ class PostController extends AbstractController
         }
 
         return $this->redirectToRoute('app_home');
+    }
+
+    #[Route('/post/{id}/like', name: 'app_post_like')]
+    #[IsGranted('ROLE_USER')]
+    public function like(Post $post, EntityManagerInterface $entityManager): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if ($post->isLikedByUser($user)) {
+            $post->removeLike($user);
+        } else {
+            $post->addLike($user);
+        }
+
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_feed');
+    }
+
+    #[Route('/post/{id}/comment', name: 'app_post_comment', methods: ['POST'])]
+    #[IsGranted('ROLE_USER')]
+    public function comment(Post $post, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $content = $request->request->get('content');
+
+        if ($content) {
+            $comment = new Comment();
+            $comment->setContent($content);
+            $comment->setAuthor($this->getUser());
+            $comment->setPost($post);
+
+            $entityManager->persist($comment);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('app_feed');
     }
 }

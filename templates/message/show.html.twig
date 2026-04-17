@@ -49,9 +49,17 @@
                                 </button>
                             </div>
                         </div>
-                        <span class="bubble-full-date">
-                            {{ message.createdAt|date('d/m/Y à H:i') }}
-                        </span>
+                        {# Date et heure en bas + indicateur de lecture #}
+                        <div class="msg-footer">
+                            <span class="bubble-full-date">
+                                {{ message.createdAt|date('d/m/Y à H:i') }}
+                            </span>
+                            {% if message.sender == app.user %}
+                                <span class="read-status {{ message.isRead ? 'read' : 'sent' }}">
+                                    {{ message.isRead ? '· Vu' : '· Envoyé' }}
+                                </span>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             {% endfor %}
@@ -117,7 +125,11 @@
     .sent .message-bubble { background: var(--fb-blue); color: white; }
     .received .message-bubble { background: var(--fb-received); color: #050505; }
 
-    .bubble-full-date { font-size: 0.65rem; color: #8e8e8e; margin-top: 4px; }
+    .bubble-full-date { font-size: 0.65rem; color: #8e8e8e; }
+    .msg-footer { display: flex; gap: 4px; align-items: center; margin-top: 4px; }
+    .sent .msg-footer { justify-content: flex-end; }
+    .read-status { font-size: 0.65rem; font-weight: 600; color: #8e8e8e; }
+    .read-status.read { color: var(--fb-blue); }
 
     .message-actions-overlay { position: absolute; top: 50%; transform: translateY(-50%); display: none; }
     .sent .message-actions-overlay { right: 105%; }

@@ -1,47 +1,149 @@
-<div class="glass-card mb-4 p-4 animate__animated animate__fadeInUp hover-lift" id="post-{{ post.id }}">
-    <div class="d-flex align-items-center mb-3">
-        <div class="avatar-sm me-3">
+<div class="fb-post-card animate__animated animate__fadeInUp" id="post-{{ post.id }}">
+    {# En-tête du Post #}
+    <div class="post-header">
+        <a href="{{ path('app_profile', {'username': post.author.username}) }}" class="avatar-link">
             {% if post.author.avatarUrl %}
-                <img src="{{ post.author.avatarUrl }}" alt="{{ post.author.username }}" class="rounded-circle" width="45" height="45">
+                <img src="{{ post.author.avatarUrl }}" alt="{{ post.author.username }}">
             {% else %}
-                <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center text-white fw-bold" style="width: 45px; height: 45px;">
-                    {{ post.author.username|slice(0, 1)|upper }}
-                </div>
+                <div class="avatar-placeholder">{{ post.author.username|slice(0, 1)|upper }}</div>
             {% endif %}
+        </a>
+        <div class="post-meta">
+            <a href="{{ path('app_profile', {'username': post.author.username}) }}" class="author-name">
+                {{ post.author.username }}
+            </a>
+            <span class="post-date">{{ post.createdAt|date('d F à H:i') }} · <i class="bi bi-globe-americas"></i></span>
         </div>
-        <div>
-            <h5 class="mb-0">
-                <a href="{{ path('app_profile', {'username': post.author.username}) }}" class="text-decoration-none text-white">
-                    {{ post.author.username }}
-                </a>
-            </h5>
-            <small class="text-muted">{{ post.createdAt|date('d/m/Y à H:i') }}</small>
+        <div class="post-options">
+            <i class="bi bi-three-dots"></i>
         </div>
-    </div>
-    
-    <div class="post-content mb-3 text-light">
-        {{ post.content|nl2br }}
     </div>
 
-    <div class="d-flex align-items-center border-top pt-3 mt-3">
-        {% if app.user %}
-            <a href="{{ path('app_post_like', {'id': post.id}) }}" class="btn btn-sm {{ post.isLikedByUser(app.user) ? 'btn-danger' : 'btn-outline-light' }} me-3 glass-button-sm">
-                <i class="bi {{ post.isLikedByUser(app.user) ? 'bi-heart-fill' : 'bi-heart' }}"></i>
-                {{ post.likes|length }}
-            </a>
-        {% else %}
-            <span class="text-muted me-3">
-                <i class="bi bi-heart"></i> {{ post.likes|length }}
+    {# Contenu du Post #}
+    <div class="post-body">
+        <p>{{ post.content|nl2br }}</p>
+    </div>
+
+    {# Compteurs d'interactions #}
+    <div class="post-stats">
+        <div class="likes-count">
+            <span class="like-icons">
+                <i class="bi bi-hand-thumbs-up-fill text-primary"></i>
             </span>
+            <span>{{ post.likes|length }}</span>
+        </div>
+        <div class="comments-count">
+            {{ post.comments|length }} commentaires
+        </div>
+    </div>
+
+    {# Boutons d'action #}
+    <div class="post-actions">
+        {% if app.user %}
+            <a href="{{ path('app_post_like', {'id': post.id}) }}" class="action-btn {{ post.isLikedByUser(app.user) ? 'active' : '' }}">
+                <i class="bi {{ post.isLikedByUser(app.user) ? 'bi-hand-thumbs-up-fill' : 'bi-hand-thumbs-up' }}"></i>
+                J'aime
+            </a>
+            <button class="action-btn" onclick="toggleComments({{ post.id }})">
+                <i class="bi bi-chat-square text-muted"></i>
+                Commenter
+            </button>
+            <button class="action-btn">
+                <i class="bi bi-share text-muted"></i>
+                Partager
+            </button>
         {% endif %}
-        
-        {% if is_granted('DELETE', post) %}
-            <form method="post" action="{{ path('app_post_delete', {'id': post.id}) }}" onsubmit="return confirm('Supprimer ce post ?');" class="ms-auto">
-                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ post.id) }}">
-                <button class="btn btn-sm btn-outline-danger border-0">
-                    <i class="bi bi-trash"></i>
-                </button>
+    </div>
+
+    {# Section Commentaires #}
+    <div class="post-comments" id="comments-{{ post.id }}" style="display: none;">
+        <div class="comments-list">
+            {% for comment in post.comments %}
+                <div class="comment-item">
+                    <img src="{{ comment.author.avatarUrl ?: 'https://ui-avatars.com/api/?name=' ~ comment.author.username }}" class="comment-avatar">
+                    <div class="comment-bubble">
+                        <div class="comment-author">@{{ comment.author.username }}</div>
+                        <div class="comment-text">{{ comment.content }}</div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if app.user %}
+            <form action="{{ path('app_post_comment', {'id': post.id}) }}" method="POST" class="comment-form">
+                <img src="{{ app.user.avatarUrl ?: 'https://ui-avatars.com/api/?name=' ~ app.user.username }}" class="comment-avatar-input">
+                <div class="input-wrapper">
+                    <input type="text" name="content" placeholder="Écrivez un commentaire..." required>
+                    <button type="submit"><i class="bi bi-send-fill"></i></button>
+                </div>
             </form>
         {% endif %}
     </div>
 </div>
+
+<style>
+    .fb-post-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        padding: 12px 16px;
+        color: #050505;
+    }
+
+    .post-header { display: flex; align-items: center; margin-bottom: 12px; }
+    .avatar-link img, .avatar-placeholder { 
+        width: 40px; height: 40px; border-radius: 50%; 
+        margin-right: 12px; display: flex; align-items: center; justify-content: center;
+    }
+    .avatar-placeholder { background: #1877f2; color: white; font-weight: bold; }
+    
+    .post-meta { flex: 1; }
+    .author-name { font-weight: 600; color: #050505; text-decoration: none; display: block; }
+    .author-name:hover { text-decoration: underline; }
+    .post-date { font-size: 0.8rem; color: #65676b; }
+
+    .post-body { margin-bottom: 12px; font-size: 0.95rem; }
+
+    .post-stats { 
+        display: flex; justify-content: space-between; 
+        padding-bottom: 8px; border-bottom: 1px solid #ced0d4;
+        color: #65676b; font-size: 0.9rem;
+    }
+    .like-icons { background: #1877f2; color: white; border-radius: 50%; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.6rem; margin-right: 5px; }
+
+    .post-actions { display: flex; padding: 4px 0; border-bottom: 1px solid #ced0d4; margin-bottom: 12px; }
+    .action-btn { 
+        flex: 1; border: none; background: transparent; padding: 8px; 
+        color: #65676b; font-weight: 600; font-size: 0.9rem;
+        display: flex; align-items: center; justify-content: center; gap: 8px;
+        border-radius: 4px; cursor: pointer; text-decoration: none;
+    }
+    .action-btn:hover { background: #f2f2f2; }
+    .action-btn.active { color: #1877f2; }
+
+    /* Commentaires */
+    .post-comments { padding-top: 12px; }
+    .comment-item { display: flex; gap: 8px; margin-bottom: 12px; }
+    .comment-avatar { width: 32px; height: 32px; border-radius: 50%; }
+    .comment-bubble { background: #f0f2f5; padding: 8px 12px; border-radius: 18px; flex: 1; }
+    .comment-author { font-weight: 600; font-size: 0.85rem; }
+    .comment-text { font-size: 0.9rem; }
+
+    .comment-form { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+    .comment-avatar-input { width: 32px; height: 32px; border-radius: 50%; }
+    .input-wrapper { background: #f0f2f5; border-radius: 20px; padding: 6px 12px; flex: 1; display: flex; }
+    .comment-form input { border: none; background: transparent; flex: 1; font-size: 0.9rem; outline: none; }
+    .comment-form button { border: none; background: transparent; color: #1877f2; cursor: pointer; }
+</style>
+
+<script>
+    function toggleComments(postId) {
+        const commentSection = document.getElementById('comments-' + postId);
+        if (commentSection.style.display === 'none') {
+            commentSection.style.display = 'block';
+        } else {
+            commentSection.style.display = 'none';
+        }
+    }
+</script>

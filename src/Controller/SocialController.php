@@ -56,23 +56,6 @@ class SocialController extends AbstractController
         return $this->redirectToRoute('app_profile', ['username' => $username]);
     }
 
-    #[Route('/like/{id}', name: 'app_post_like')]
-    #[IsGranted('ROLE_USER')]
-    public function like(Post $post, EntityManagerInterface $entityManager): Response
-    {
-        /** @var User $currentUser */
-        $currentUser = $this->getUser();
-
-        if ($post->isLikedByUser($currentUser)) {
-            $post->removeLike($currentUser);
-        } else {
-            $post->addLike($currentUser);
-        }
-
-        $entityManager->flush();
-
-        return $this->redirect($this->generateUrl('app_home') . '#post-' . $post->getId());
-    }
 
     #[Route('/feed', name: 'app_feed')]
     #[IsGranted('ROLE_USER')]

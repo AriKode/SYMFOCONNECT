@@ -49,10 +49,17 @@ class Post
     #[ORM\JoinTable(name: 'post_likes')]
     private Collection $likes;
 
+    /**
+     * @var Collection<int, Comment>
+     */
+    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'post', orphanRemoval: true)]
+    private Collection $comments;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->likes = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -123,5 +130,13 @@ class Post
     public function isLikedByUser(User $user): bool
     {
         return $this->likes->contains($user);
+    }
+
+    /**
+     * @return Collection<int, Comment>
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
     }
 }
