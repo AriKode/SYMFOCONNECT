@@ -31,6 +31,10 @@ class Message
     #[ORM\Column]
     private ?bool $isRead = false;
 
+    #[ORM\ManyToOne(targetEntity: self::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?self $parentMessage = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -98,6 +102,18 @@ class Message
     public function setIsRead(bool $isRead): static
     {
         $this->isRead = $isRead;
+
+        return $this;
+    }
+
+    public function getParentMessage(): ?self
+    {
+        return $this->parentMessage;
+    }
+
+    public function setParentMessage(?self $parentMessage): static
+    {
+        $this->parentMessage = $parentMessage;
 
         return $this;
     }

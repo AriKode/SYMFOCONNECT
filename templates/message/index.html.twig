@@ -1,78 +1,124 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mes Conversations - SymfoConnect{% endblock %}
+{% block title %}Messages - SymfoConnect{% endblock %}
 
 {% block body %}
-<div class="messages-container">
-    <h1 class="page-title">Mes Conversations</h1>
-
-    <div class="conversations-list">
-        {% for otherUser in conversations %}
-            <a href="{{ path('app_message_show', {'username': otherUser.username}) }}" class="conversation-item">
-                <div class="user-avatar">
-                    <img src="{{ otherUser.avatarUrl ?: 'https://ui-avatars.com/api/?name=' ~ otherUser.username }}" alt="{{ otherUser.username }}">
-                </div>
-                <div class="conversation-info">
-                    <div class="user-header">
-                        <span class="username">@{{ otherUser.username }}</span>
-                    </div>
-                </div>
-                <div class="action-arrow">
-                    <i class="bi bi-chevron-right"></i>
-                </div>
-            </a>
-        {% else %}
-            <div class="empty-state">
-                <i class="bi bi-chat-dots"></i>
-                <p>Vous n'avez pas encore de conversations.</p>
-                <a href="{{ path('app_home') }}" class="btn-primary">Découvrir des profils</a>
+<div class="messenger-list-wrapper animate__animated animate__fadeIn">
+    <div class="messenger-list-container">
+        <div class="list-header">
+            <h1>Discussions</h1>
+            <div class="header-tools">
+                <a href="{{ path('app_messages_mark_all_read') }}" class="btn-mark-read" title="Tout marquer comme lu">
+                    <i class="bi bi-check2-all"></i>
+                </a>
+                <i class="bi bi-three-dots"></i>
+                <i class="bi bi-pencil-square"></i>
             </div>
-        {% endfor %}
+        </div>
+
+        <div class="search-bar">
+            <div class="search-input-wrapper">
+                <i class="bi bi-search"></i>
+                <input type="text" placeholder="Rechercher dans Messenger">
+            </div>
+        </div>
+
+        <div class="conversations-scroll">
+            {% for otherUser in conversations %}
+                <a href="{{ path('app_message_show', {'username': otherUser.username}) }}" class="convo-item">
+                    <div class="convo-avatar">
+                        <img src="{{ otherUser.avatarUrl ?: 'https://ui-avatars.com/api/?name=' ~ otherUser.username }}" alt="{{ otherUser.username }}">
+                        <span class="online-indicator"></span>
+                    </div>
+                    <div class="convo-content">
+                        <div class="convo-name">@{{ otherUser.username }}</div>
+                        <div class="convo-preview">Cliquez pour voir la conversation</div>
+                    </div>
+                    {% set unreadCount = unread_messages_count() %} {# Note: this is global unread, for better UX we should show per-user but for now it works #}
+                </a>
+            {% else %}
+                <div class="empty-list">
+                    <i class="bi bi-chat-dots-fill"></i>
+                    <p>Aucune discussion trouvée.</p>
+                    <a href="{{ path('app_home') }}" class="btn btn-primary glass-button mt-3">Trouver des amis</a>
+                </div>
+            {% endfor %}
+        </div>
     </div>
 </div>
 
 <style>
-    .messages-container {
+    .messenger-list-wrapper {
         max-width: 600px;
         margin: 2rem auto;
+        height: 80vh;
     }
-    .conversations-list {
-        background: var(--bg-card);
-        border-radius: 1rem;
-        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-        overflow: hidden;
+    .messenger-list-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 12px 28px 0 rgba(0, 0, 0, 0.1);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
     }
-    .conversation-item {
+    .list-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px;
+    }
+    .list-header h1 { font-size: 1.5rem; font-weight: 700; margin: 0; }
+    .header-tools { display: flex; gap: 15px; color: #65676b; }
+    
+    .search-bar { padding: 0 16px 12px 16px; }
+    .search-input-wrapper {
+        background: #f0f2f5;
+        border-radius: 20px;
+        padding: 8px 12px;
         display: flex;
         align-items: center;
-        padding: 1rem;
+        gap: 10px;
+        color: #65676b;
+    }
+    .search-input-wrapper input {
+        background: transparent;
+        border: none;
+        outline: none;
+        flex: 1;
+        font-size: 0.9rem;
+    }
+
+    .conversations-scroll { flex: 1; overflow-y: auto; }
+    
+    .convo-item {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
         text-decoration: none;
         color: inherit;
         transition: background 0.2s;
-        border-bottom: 1px solid rgba(0,0,0,0.05);
     }
-    .conversation-item:hover {
-        background: rgba(0,0,0,0.02);
+    .convo-item:hover { background: #f0f2f5; }
+    
+    .convo-avatar { position: relative; margin-right: 12px; }
+    .convo-avatar img { width: 56px; height: 56px; border-radius: 50%; }
+    .online-indicator {
+        position: absolute; bottom: 4px; right: 4px;
+        width: 14px; height: 14px; border-radius: 50%;
+        background: #31a24c; border: 3px solid white;
     }
-    .user-avatar img {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        margin-right: 1rem;
+
+    .convo-content { flex: 1; min-width: 0; }
+    .convo-name { font-weight: 600; color: #050505; }
+    .convo-preview { 
+        font-size: 0.85rem; 
+        color: #65676b; 
+        white-space: nowrap; 
+        overflow: hidden; 
+        text-overflow: ellipsis; 
     }
-    .conversation-info {
-        flex: 1;
-    }
-    .action-arrow {
-        color: #94a3b8;
-    }
-    .empty-state {
-        text-align: center;
-        padding: 4rem 2rem;
-    }
-    .empty-state i {
-        font-size: 3rem;
-        color: #cbd5e1;
-    }
+
+    .empty-list { text-align: center; padding: 4rem 2rem; color: #65676b; }
+    .empty-list i { font-size: 4rem; opacity: 0.2; }
 </style>
 {% endblock %}

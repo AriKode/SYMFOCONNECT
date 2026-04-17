@@ -8,6 +8,7 @@ use App\Form\MessageType;
 use App\Message\NewMessageNotification;
 use App\Repository\MessageRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,9 +30,27 @@ class MessageController extends AbstractController
         ]);
     }
 
+    #[Route('/mark-all-read', name: 'app_messages_mark_all_read')]
+    public function markAllRead(EntityManagerInterface $entityManager, MessageRepository $messageRepository): Response
+    {
+        $unreadMessages = $messageRepository->findBy([
+            'recipient' => $this->getUser(),
+            'isRead' => false
+        ]);
+
+        foreach ($unreadMessages as $message) {
+            $message->setIsRead(true);
+        }
+
+        $entityManager->flush();
+        $this->addFlash('success', 'Tous les messages ont été marqués comme lus.');
+
+        return $this->redirectToRoute('app_messages');
+    }
+
     #[Route('/{username}', name: 'app_message_show')]
     public function show(
-        User $recipient,
+        #[MapEntity(mapping: ['username' => 'username'])] User $recipient,
         MessageRepository $messageRepository,
         Request $request,
         EntityManagerInterface $entityManager,
@@ -56,6 +75,14 @@ class MessageController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $parentId = $request->request->get('parent_id');
+            if ($parentId) {
+                $parentMessage = $messageRepository->find($parentId);
+                if ($parentMessage) {
+                    $message->setParentMessage($parentMessage);
+                }
+            }
+
             $message->setSender($this->getUser());
             $message->setRecipient($recipient);
             

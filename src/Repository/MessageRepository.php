@@ -44,14 +44,26 @@ class MessageRepository extends ServiceEntityRepository
     public function findHistory(User $user1, User $user2): array
     {
         return $this->createQueryBuilder('m')
-            ->where($this->getEntityManager()->getExpressionBuilder()->orX(
-                $this->getEntityManager()->getExpressionBuilder()->andX('m.sender = :user1', 'm.recipient = :user2'),
-                $this->getEntityManager()->getExpressionBuilder()->andX('m.sender = :user2', 'm.recipient = :user1')
-            ))
+            ->where('(m.sender = :user1 AND m.recipient = :user2) OR (m.sender = :user2 AND m.recipient = :user1)')
             ->setParameter('user1', $user1)
             ->setParameter('user2', $user2)
             ->orderBy('m.createdAt', 'ASC')
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * Compte le nombre de messages non lus pour un utilisateur
+     */
+    public function countUnreadMessages(User $user): int
+    {
+        return $this->createQueryBuilder('m')
+            ->select('count(m.id)')
+            ->where('m.recipient = :user')
+            ->andWhere('m.isRead = :isRead')
+            ->setParameter('user', $user)
+            ->setParameter('isRead', false)
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 }
